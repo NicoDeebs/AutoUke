@@ -7,12 +7,12 @@
 #include "SDFileSystem.h"
 #include "Solenoids.h"
 #include "Metronome.h"
-#include "Decoder.h"
+#include "Decode.h"
 
 
 //Program Constants
 #define arrSize 300 //Maximum size of the chord array
-#define minBPM 50.0 //BPM setting when potentiometer is maximum
+#define minBPM 25.0 //BPM setting when potentiometer is maximum
 #define maxBPM 200.0 //BPM setting when potentiometer is minimum
 #define turnOffLimit .98
 
@@ -41,9 +41,12 @@ AnalogIn pot(p16); //Potentiometer reading
 void readSD() {
     FILE *fp = fopen("/sd/tab.txt", "r");
     if(!fp) return;
-    metronome.setTime((int)(getc(fp)-'0'));
-    getc(fp);
     char ch = getc(fp);
+    if((ch>='0')&(ch<='4')) {
+        metronome.setTime((int)(ch -'0'));
+        getc(fp);
+        ch = getc(fp);
+    }
     int chord;
     while(ch-255) {
         if(chord = readChar(ch)) { //Intentional assignment inside conditional
@@ -77,8 +80,21 @@ void offRoutine() {
     readSD();
 }
 
+void log() {
+    FILE *fp = fopen("/sd/log.txt", "w");
+    if(!fp) return;
+    int chord;
+    int i = 0;
+    for(i=0;i<chordMaxIndex;i++) {
+        chord = chordArray[i];
+        fprintf(fp,"%d,%d,%d,%d; ",(((chord>>9)&(0b111))),(((chord>>6)&(0b111))),(((chord>>3)&(0b111))),(((chord)&(0b111))));
+    }
+    fclose(fp);
+}
+
 int main() {
     readSD();
+    log();
     while(1) {
         if(metronome.clockTick()) {
             sendChord(chordArray[chordCurrentIndex++]);

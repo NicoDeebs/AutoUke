@@ -1,5 +1,6 @@
 #include "mbed.h"
-
+//EXCLUDED FROM FINAL BUILD
+//Replaced with decode.h
 
 enum notes {A=0,As=1,Bb=1,B=2,C=3,Cs=4,Db=4,D=5,Ds=6,Eb=6,E=7,F=8,Fs=9,Gb=9,G=10,Gs=11,Ab=11}; //Enum type for keyboard notes. Identical notes share an enum value. (I. E. Ab = B#), value corresponds to half step distance from A.
 enum chordType {MAJ,MIN,AUG,DIM,DOM7,MIN7,MAJ7,MAJ6,MIN6,ADD9,MIN9,MAJ9,SUS2,SUS4,SEVSUS4}; //Enum type for chord types, A note and type can together uniquely characterize a chord
@@ -30,11 +31,12 @@ CHORDS_AU,CHORDS_AUG,CHORDS_AD,CHORDS_ADD,CHORDS_ADD9, //Chord states starting w
 CHORDS_DI,CHORDS_DIM,CHORDS_SU,CHORDS_SUS,CHORDS_SUS2,CHORDS_SUS4, //Chord states starting with D or S
 CHORDS_7S,CHORDS_7SU,CHORDS_7SUS,CHORDS_7SUS4}; //Chord states starting with 7
 
+const char names[6] = "\0\0\0\0\0";
+//const char names[15][5] = {"\0
 
 int state = BASE;
 int note = -1;
 int chord = -1;
-
 
 /*
 * State-machine like interpreting system for the SD card file.
@@ -43,7 +45,8 @@ int chord = -1;
 * chord that was input by indexing the frets array.
 */
 int readChar(char inChar) {
-        if((inChar>='a') & (inChar>='z')) inChar = inChar - 'a' + 'A';//Code converts lower case letters to upper case, as case sensativity isn't important for this state machine
+        if((inChar>='a') & (inChar<='z')) inChar = inChar - 'a' + 'A';//Code converts lower case letters to upper case, as case sensativity isn't important for this state machine
+        if(inChar==' ') return 0; //Ignore spaces
         switch(state) {
             case BASE:
                 note = -1;
@@ -94,7 +97,7 @@ int readChar(char inChar) {
                 } else if(inChar=='A') {
                     state = CHORDS_MA;
                 } else if(inChar=='6') {
-                    state = CHORDS_M6;
+                    state = CHORDS_M6;//Look at this janky code
                 } else if(inChar=='9') {
                     state = CHORDS_M9;
                 } else {
@@ -138,7 +141,7 @@ int readChar(char inChar) {
                     state = CHORDS_7S;
                 } else if(inChar==',') {
                     chord = DOM7;
-                    state = BASE;
+                    state = BASE;//It's awful isn't it
                     return frets[note][chord];
                 } else {
                     state = BASE;
@@ -181,7 +184,7 @@ int readChar(char inChar) {
             case CHORDS_M6:
                 if(inChar==',') {
                     chord = MIN6;
-                    state = BASE;
+                    state = BASE;//Tastes like spaghetti
                     return frets[note][chord];
                 } else {
                     state = BASE;
