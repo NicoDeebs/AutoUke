@@ -16,13 +16,14 @@ static const int frets[12][numChords] = {
 /*G♮*/{ch(0,2,3,2),ch(0,2,3,1),ch(0,3,3,2),ch(0,1,3,1),ch(0,2,1,2),ch(0,2,1,1),ch(0,2,2,2),ch(0,2,0,2),ch(0,2,0,1),ch(0,2,5,2),ch(2,2,3,1),ch(2,2,1,2),ch(0,2,3,0),ch(0,2,3,3),ch(0,2,1,3)},
 /*G#*/{ch(4,2,3,2),ch(4,3,4,2),ch(1,0,0,3),ch(1,2,1,2),ch(1,3,2,3),ch(1,3,2,2),ch(1,3,3,3),ch(1,3,1,3),ch(3,4,3,5),ch(3,3,4,3),ch(3,3,4,2),ch(3,3,2,3),ch(1,3,4,1),ch(1,3,4,4),ch(1,3,2,4)}};
 static const int letarray[7] = {0,2,3,5,7,8,10};//Used to convert an ASCII character into a note (For example, ascii(G-A) is 7, but G natural corresponds to note 10 in the ENUM type
-static const char names[numChords][6] = {"\0\0\0\0\0","M\0\0\0\0","AUG\0\0","DIM\0\0","7\0\0\0\0","M7\0\0\0","MAJ7\0","MAJ6\0","M6\0\0\0","ADD9\0","M9\0\0\0","MAJ9\0","SUS2\0","SUS4\0","7SUS4"};
+static const char names[numChords][6] = {"\0\0\0\0\0","M\0\0\0\0","AUG\0\0","DIM\0\0","7\0\0\0\0","M7\0\0\0","MAJ7\0","MAJ6\0","M6\0\0\0","ADD9\0","M9\0\0\0","MAJ9\0","SUS2\0","SUS4\0","7SUS4"}; //Hotstrings to be checked for in tab.txt
 
 static char inputName[5];
 static int state;
 static int note;
 
-/*Compares inputName vector to names[nameInd], returns 1 if they are equal and 0 otherwise
+/*
+Compares inputName vector to names[nameInd], returns 1 if they are equal and 0 otherwise
 */
 int compareIn(int nameInd) {
     int i;
@@ -54,24 +55,23 @@ int readChar(char inChar) {
             note = -1;
             resetInput();
             if((inChar>='A') & (inChar<='G')) { //Alphabetical inputs in base state are interpreted as the start of a chord declaration
-                note = letarray[(int)(inChar-'A')];
+                note = letarray[(int)(inChar-'A')]; //Converts characters A through G into an integer number of half steps from A.
                 state++;
             }
         } else if((state==1)&&(inChar=='#')) {
-            note = (note + 1)%12; //If sharp, adds 1 and stays within positive octave of A
+            note = (note + 1)%12; //If sharp, adds 1 to note and mods to stay within positive octave(0-11) of A.
         } else if((state==1)&&(inChar=='B')) {
-            note = (note - 1)%12; //If flat, subtracts 1 and stays within positive octave of A
-        }else if(state > 6){
-            state = 0;
-        } else if(inChar==',') {
-            state = 0;
+            note = (note - 1)%12; //If flat, subtracts 1 from note and mods to stay within positive octave(0-11) of A.
+        }else if(state > 6){ 
+            state = 0; //If 6 chars have been entered without a comma, resets to state 0
+        } else if(inChar==',') { //Checks letters entered if a comma has been entered
+            state = 0; 
             int i;
             for(i = 0; i < numChords;i++) {
-                if(compareIn(i)) return frets[note][i];
+                if(compareIn(i)) return frets[note][i]; //Checks if a valid chord was entered, and if so, returns that chord's string numbers
             }
         } else {
-            inputName[state-1] = inChar;
             state++;
         }
-        return 0;
+        return 0; //If an entire chord has not yet been entered, returns zero.
 }

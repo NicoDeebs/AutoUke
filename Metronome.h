@@ -63,6 +63,7 @@ return returnVal;
 */
 void Metronome::setTime(int type) {
     time = type;
+    this->reset();
 }
 
 void Metronome::reset() {
