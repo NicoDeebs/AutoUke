@@ -1,4 +1,4 @@
-#define ch(a,b,c,d) ((a<<9)|(b<<6)|(c<<3)|d|(1<<31)) //chord(string 1, string 2, string 3, string 4), each string takes a number that represents what fret each string is for that chord. 3 bit number, 0-5
+#define ch(a,b,c,d) ((a<<9)|(b<<6)|(c<<3)|d|(1<<12)) //chord(string 1, string 2, string 3, string 4), each string takes a number that represents what fret each string is for that chord. 3 bit number, 0-5
 #define numChords 15
 
 static const int frets[12][numChords] = {
@@ -71,6 +71,7 @@ int readChar(char inChar) {
                 if(compareIn(i)) return frets[note][i]; //Checks if a valid chord was entered, and if so, returns that chord's string numbers
             }
         } else {
+            inputName[state-1] = inChar; //If a comma has not yet been entered and a note has been, all letters up to either the first comma or the 5th letter are stored
             state++;
         }
         return 0; //If an entire chord has not yet been entered, returns zero.

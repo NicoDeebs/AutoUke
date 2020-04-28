@@ -41,7 +41,7 @@ AnalogIn pot(p16); //Potentiometer reading
 * If it returns a chord, adds it to the chord array.
 */
 void chordCall(char c) {
-    int chord = readChar(c)
+    int chord = readChar(c);
     if(chord) { 
         if(chordMaxIndex<arrSize) chordArray[chordMaxIndex++] = chord;
     }
