@@ -50,7 +50,7 @@ We did not use the MBed RTOS for this lab. RTOS may seem like a natural fit for 
 
 ## Video Demo
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=ppW-VwZQIFY" target="_blank"><img src="http://img.youtube.com/vi/ppW-VwZQIFY/0.jpg"alt="It's not really embedded sorry" width="240" height="180" border="10" /></a>
+[![It's not really embedded sorry](http://img.youtube.com/vi/ppW-VwZQIFY/0.jpg)](http://www.youtube.com/watch?v=ppW-VwZQIFY)
 
 ## Development Pictures
 
